@@ -1,0 +1,1412 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CCNP解説くん</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap');
+
+  :root {
+    --bg: #0a0e1a;
+    --surface: #111827;
+    --surface2: #1a2235;
+    --accent: #00e5ff;
+    --accent2: #ff6b35;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --green: #00ff88;
+    --border: rgba(0,229,255,0.15);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Zen Kaku Gothic New', sans-serif;
+    min-height: 100vh;
+    padding: 24px 16px;
+    background-image:
+      radial-gradient(ellipse at 20% 20%, rgba(0,229,255,0.04) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 80%, rgba(255,107,53,0.04) 0%, transparent 50%);
+  }
+
+  .container { max-width: 760px; margin: 0 auto; }
+
+  header { text-align: center; margin-bottom: 36px; padding-top: 16px; }
+
+  .logo {
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--accent);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    opacity: 0.8;
+  }
+
+  h1 {
+    font-size: 32px;
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.2;
+    margin-bottom: 8px;
+  }
+
+  .subtitle { color: var(--muted); font-size: 14px; }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+
+  .label {
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--accent);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .label::before {
+    content: '';
+    display: inline-block;
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+  }
+
+  .upload-area {
+    border: 2px dashed var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--surface2);
+  }
+
+  .upload-area:hover,
+  .upload-area.drag-over {
+    border-color: var(--accent);
+    background: rgba(0,229,255,0.05);
+  }
+
+  .upload-icon { font-size: 28px; margin-bottom: 8px; }
+  .upload-text { color: var(--muted); font-size: 13px; line-height: 1.6; }
+  .upload-text span { color: var(--accent); }
+
+  .image-previews { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+
+  .image-thumb { position: relative; width: 90px; height: 90px; flex-shrink: 0; }
+
+  .image-thumb img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+  }
+
+  .remove-btn {
+    position: absolute;
+    top: 4px; right: 4px;
+    background: rgba(0,0,0,0.75);
+    border: none;
+    border-radius: 50%;
+    color: #fff;
+    font-size: 11px;
+    width: 20px; height: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+  }
+
+  .remove-btn:hover { background: rgba(255,107,53,0.85); }
+
+  input[type="text"] {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-family: 'Zen Kaku Gothic New', sans-serif;
+    font-size: 14px;
+    padding: 12px 16px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  input[type="text"]:focus { border-color: var(--accent); }
+  input[type="text"]::placeholder { color: var(--muted); }
+
+  .tip {
+    background: rgba(0,229,255,0.05);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 8px 8px 0;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 16px;
+    line-height: 1.6;
+  }
+
+  .tip span { color: var(--accent); font-weight: 700; }
+
+  .btn {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, var(--accent), #0099bb);
+    border: none;
+    border-radius: 12px;
+    color: #000;
+    font-family: 'Zen Kaku Gothic New', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 16px;
+    letter-spacing: 1px;
+  }
+
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,229,255,0.3); }
+  .btn:active { transform: translateY(0); }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+  .loading {
+    display: none;
+    text-align: center;
+    padding: 32px;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+  }
+
+  .loading.show { display: block; }
+
+  .spinner {
+    display: inline-block;
+    width: 24px; height: 24px;
+    border: 2px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin-bottom: 12px;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+  .result {
+    display: none;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    margin-top: 20px;
+    animation: fadeIn 0.4s ease;
+  }
+
+  .result.show { display: block; }
+
+  .section { margin-bottom: 22px; }
+
+  .section-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--accent);
+    padding: 6px 12px;
+    border-left: 3px solid var(--accent);
+    background: rgba(0,229,255,0.06);
+    border-radius: 0 6px 6px 0;
+    margin-bottom: 10px;
+  }
+
+  .section-body {
+    font-size: 14px;
+    line-height: 1.85;
+    padding-left: 4px;
+    color: var(--text);
+  }
+
+  .point-box {
+    background: rgba(255,107,53,0.08);
+    border: 1px solid rgba(255,107,53,0.3);
+    border-radius: 10px;
+    padding: 14px 18px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--accent2);
+  }
+
+  .figure-area { margin-top: 20px; display: none; }
+
+  .figure-content {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    overflow-x: auto;
+    margin-top: 10px;
+  }
+
+  .figure-content svg { display: block; margin: 0 auto; max-width: 100%; }
+
+  .mt20 { margin-top: 20px; }
+
+  .apikey-bar {
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .apikey-bar label {
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--accent);
+    letter-spacing: 1px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .apikey-bar input {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    padding: 7px 12px;
+    outline: none;
+    transition: border-color 0.2s;
+    min-width: 0;
+  }
+
+  .apikey-bar input:focus { border-color: var(--accent); }
+  .apikey-bar input::placeholder { color: var(--muted); }
+
+  .apikey-status {
+    font-size: 11px;
+    flex-shrink: 0;
+  }
+
+  .preq-area {
+    display: none;
+    margin-top: 20px;
+    border-top: 1px solid var(--border);
+    padding-top: 20px;
+  }
+
+  .preq-area.show { display: block; }
+
+  .preq-history {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+
+  .preq-bubble {
+    max-width: 90%;
+    padding: 12px 16px;
+    border-radius: 12px;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  .preq-bubble.user {
+    background: rgba(0,229,255,0.1);
+    border: 1px solid rgba(0,229,255,0.2);
+    align-self: flex-end;
+    color: var(--text);
+  }
+
+  .preq-bubble.assistant {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    align-self: flex-start;
+    color: var(--text);
+  }
+
+  .preq-bubble img {
+    max-width: 100px;
+    max-height: 70px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    margin-top: 6px;
+    margin-right: 6px;
+  }
+
+  .preq-input-area {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .preq-input-area textarea {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-family: 'Zen Kaku Gothic New', sans-serif;
+    font-size: 14px;
+    line-height: 1.7;
+    padding: 12px 16px;
+    resize: vertical;
+    min-height: 72px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .preq-input-area textarea:focus { border-color: var(--accent); }
+  .preq-input-area textarea::placeholder { color: var(--muted); }
+
+  .preq-img-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .preq-img-add {
+    width: 48px; height: 48px;
+    border: 2px dashed var(--border);
+    border-radius: 8px;
+    background: var(--surface2);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+
+  .preq-img-add:hover { border-color: var(--accent); background: rgba(0,229,255,0.05); }
+
+  .preq-thumb {
+    position: relative;
+    width: 48px; height: 48px;
+    flex-shrink: 0;
+  }
+
+  .preq-thumb img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+  }
+
+  .preq-thumb .remove-btn { width: 16px; height: 16px; font-size: 9px; }
+
+  .preq-btn-row {
+    display: flex;
+    gap: 8px;
+  }
+
+  .btn-preq-send {
+    flex: 1;
+    padding: 11px;
+    background: linear-gradient(135deg, var(--accent), #0099bb);
+    border: none;
+    border-radius: 10px;
+    color: #000;
+    font-family: 'Zen Kaku Gothic New', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-preq-send:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(0,229,255,0.3); }
+  .btn-preq-send:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+  .btn-preq-clear {
+    padding: 11px 16px;
+    background: transparent;
+    border: 1px solid rgba(255,107,53,0.4);
+    border-radius: 10px;
+    color: var(--accent2);
+    font-family: 'Zen Kaku Gothic New', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .btn-preq-clear:hover { background: rgba(255,107,53,0.08); }
+
+  .preq-loading {
+    display: none;
+    color: var(--muted);
+    font-size: 13px;
+    font-family: 'JetBrains Mono', monospace;
+    text-align: center;
+    padding: 10px;
+  }
+
+  .preq-loading.show { display: block; }
+
+  .btn-preq-toggle {
+    width: 100%;
+    padding: 12px;
+    background: transparent;
+    border: 1px dashed var(--border);
+    border-radius: 10px;
+    color: var(--muted);
+    font-family: 'Zen Kaku Gothic New', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 12px;
+  }
+
+  .btn-preq-toggle:hover { border-color: var(--accent); color: var(--accent); }
+
+  .btn-clear {
+    width: 100%;
+    padding: 14px;
+    background: transparent;
+    border: 1px solid rgba(255,107,53,0.4);
+    border-radius: 12px;
+    color: var(--accent2);
+    font-family: 'Zen Kaku Gothic New', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 10px;
+    letter-spacing: 1px;
+  }
+
+  .btn-clear:hover { background: rgba(255,107,53,0.08); border-color: var(--accent2); }
+
+  .followup-area {
+    display: none;
+    margin-top: 28px;
+    border-top: 1px solid var(--border);
+    padding-top: 24px;
+  }
+
+  .followup-area.show { display: block; }
+
+  .followup-history {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .msg-bubble {
+    max-width: 90%;
+    padding: 12px 16px;
+    border-radius: 12px;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  .msg-bubble.user {
+    background: rgba(0,229,255,0.1);
+    border: 1px solid rgba(0,229,255,0.2);
+    align-self: flex-end;
+    color: var(--text);
+  }
+
+  .msg-bubble.assistant {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    align-self: flex-start;
+    color: var(--text);
+  }
+
+  .msg-bubble.assistant .section-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--accent);
+    padding: 4px 10px;
+    border-left: 3px solid var(--accent);
+    background: rgba(0,229,255,0.06);
+    border-radius: 0 4px 4px 0;
+    margin-bottom: 8px;
+  }
+
+  .msg-bubble img {
+    max-width: 120px;
+    max-height: 80px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    margin-top: 8px;
+    margin-right: 6px;
+  }
+
+  .followup-input-area {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .followup-input-area textarea {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-family: 'Zen Kaku Gothic New', sans-serif;
+    font-size: 14px;
+    line-height: 1.7;
+    padding: 12px 16px;
+    resize: vertical;
+    min-height: 80px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .followup-input-area textarea:focus { border-color: var(--accent); }
+  .followup-input-area textarea::placeholder { color: var(--muted); }
+
+  .followup-img-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .followup-img-add {
+    width: 50px; height: 50px;
+    border: 2px dashed var(--border);
+    border-radius: 8px;
+    background: var(--surface2);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+
+  .followup-img-add:hover { border-color: var(--accent); background: rgba(0,229,255,0.05); }
+
+  .followup-thumb {
+    position: relative;
+    width: 50px; height: 50px;
+    flex-shrink: 0;
+  }
+
+  .followup-thumb img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+  }
+
+  .followup-thumb .remove-btn {
+    width: 16px; height: 16px;
+    font-size: 9px;
+  }
+
+  .btn-send {
+    padding: 12px 24px;
+    background: linear-gradient(135deg, var(--accent), #0099bb);
+    border: none;
+    border-radius: 10px;
+    color: #000;
+    font-family: 'Zen Kaku Gothic New', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    align-self: flex-end;
+  }
+
+  .btn-send:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(0,229,255,0.3); }
+  .btn-send:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+  .followup-loading {
+    display: none;
+    color: var(--muted);
+    font-size: 13px;
+    font-family: 'JetBrains Mono', monospace;
+    text-align: center;
+    padding: 12px;
+  }
+
+  .followup-loading.show { display: block; }
+</style>
+</head>
+<body>
+<div class="apikey-bar" style="display:none;">
+  <label>🔑 API KEY</label>
+  <input type="password" id="apikeyInput" placeholder="sk-ant-api03-..." autocomplete="off" value="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">
+  <span class="apikey-status" id="apikeyStatus" style="color:var(--green)">✅ OK</span>
+</div>
+<div class="container">
+  <header>
+    <div class="logo">CCNP Study Tool</div>
+    <h1>CCNP解説くん</h1>
+    <p class="subtitle">問題と解説のスクショを貼るだけで、わかりやすく解説するよ</p>
+  </header>
+
+  <div class="card">
+
+    <!-- 問題画像 -->
+    <div class="label">問題の画像（複数可）</div>
+    <div class="upload-area" id="qUploadArea">
+      <input type="file" id="qImageInput" accept="image/*" multiple style="display:none">
+      <div class="upload-icon">🖼️</div>
+      <div class="upload-text">問題文・選択肢のスクショを<br><span>クリックして選択</span>またはドラッグ＆ドロップ</div>
+    </div>
+    <div class="image-previews" id="qPreviews"></div>
+
+    <!-- 解説画像 -->
+    <div class="label mt20">解説の画像（複数可・任意）</div>
+    <div class="upload-area" id="eUploadArea">
+      <input type="file" id="eImageInput" accept="image/*" multiple style="display:none">
+      <div class="upload-icon">📋</div>
+      <div class="upload-text">Ping-tの解説スクショを<br><span>クリックして選択</span>またはドラッグ＆ドロップ</div>
+    </div>
+    <div class="image-previews" id="ePreviews"></div>
+
+    <!-- 正解入力 -->
+    <div class="label mt20">正解を入力する（任意）</div>
+    <input type="text" id="correctAnswer" placeholder="例：A　または　AとC　など">
+
+    <div class="tip">
+      <span>使い方：</span> 問題画像は必須。解説画像・正解を追加するとより正確になります。<br>
+      💡 Ping-tの問題文で<span>正解の選択肢が青くなっている画像</span>を添付すれば、正解の入力は不要です。
+    </div>
+
+    <button class="btn" id="explainBtn">🚀 解説してもらう</button>
+    <button class="btn-preq-toggle" id="preqToggleBtn">💬 解説の前に質問する</button>
+
+    <!-- 事前質問エリア -->
+    <div class="preq-area" id="preqArea">
+      <div class="label">事前質問</div>
+      <div class="preq-history" id="preqHistory"></div>
+      <div class="preq-loading" id="preqLoading">考え中...</div>
+      <div class="preq-input-area">
+        <textarea id="preqText" placeholder="問題についてわからないことを質問してください。画像も添付できます。"></textarea>
+        <div class="preq-img-row">
+          <div class="preq-img-add" id="preqImgAdd">＋<br><span style="font-size:9px;opacity:0.6;">ドロップも可</span></div>
+          <input type="file" id="preqImgInput" accept="image/*" multiple style="display:none">
+          <div id="preqImgPreviews" style="display:flex;gap:6px;flex-wrap:wrap;"></div>
+        </div>
+        <div class="preq-btn-row">
+          <button class="btn-preq-send" id="preqSendBtn">質問を送信 →</button>
+          <button class="btn-preq-clear" id="preqClearBtn">🗑 クリア</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+    <div>解説を生成中...</div>
+  </div>
+
+  <div class="result" id="result">
+    <div class="label">解説</div>
+    <div id="resultContent"></div>
+    <div class="figure-area" id="figureArea">
+      <div class="label">図解</div>
+      <div class="figure-content" id="figureContent"></div>
+    </div>
+
+    <!-- 追加質問エリア -->
+    <div class="followup-area" id="followupArea">
+      <div class="label">追加質問</div>
+      <div class="followup-history" id="followupHistory"></div>
+      <div class="followup-loading" id="followupLoading">考え中...</div>
+      <div class="followup-input-area">
+        <textarea id="followupText" placeholder="わからないところを質問してください。画像も添付できます。"></textarea>
+        <div class="followup-img-row">
+          <div class="followup-img-add" id="followupImgAdd" title="画像を追加">＋</div>
+          <input type="file" id="followupImgInput" accept="image/*" multiple style="display:none">
+          <div id="followupImgPreviews" style="display:flex;gap:8px;flex-wrap:wrap;"></div>
+        </div>
+        <button class="btn-send" id="followupSendBtn">追加質問を送信 →</button>
+      </div>
+    </div>
+    <button class="btn-clear" id="clearBtn">🗑 次の問題へ（全クリア）</button>
+  </div>
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  document.getElementById('apikeyInput').addEventListener('input', function() {
+    var val = this.value.trim();
+    var status = document.getElementById('apikeyStatus');
+    if (val.startsWith('sk-ant-')) {
+      status.textContent = '✅ OK';
+      status.style.color = 'var(--green)';
+    } else if (val.length > 0) {
+      status.textContent = '⚠️ 形式確認';
+      status.style.color = 'var(--yellow)';
+    } else {
+      status.textContent = '未設定';
+      status.style.color = 'var(--muted)';
+    }
+  });
+
+  var questionImages = [];
+  var explanationImages = [];
+
+  function setupUploader(areaId, inputId, imageArray, previewsId) {
+    var area = document.getElementById(areaId);
+    var input = document.getElementById(inputId);
+
+    area.addEventListener('click', function() { input.click(); });
+
+    area.addEventListener('dragover', function(e) {
+      e.preventDefault();
+      area.classList.add('drag-over');
+    });
+
+    area.addEventListener('dragleave', function() {
+      area.classList.remove('drag-over');
+    });
+
+    area.addEventListener('drop', function(e) {
+      e.preventDefault();
+      area.classList.remove('drag-over');
+      for (var i = 0; i < e.dataTransfer.files.length; i++) {
+        if (e.dataTransfer.files[i].type.indexOf('image/') === 0) {
+          loadImageInto(e.dataTransfer.files[i], imageArray, previewsId);
+        }
+      }
+    });
+
+    input.addEventListener('change', function(e) {
+      for (var i = 0; i < e.target.files.length; i++) {
+        loadImageInto(e.target.files[i], imageArray, previewsId);
+      }
+      e.target.value = '';
+    });
+  }
+
+  function loadImageInto(file, imageArray, previewsId) {
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      var dataUrl = e.target.result;
+      var parts = dataUrl.split(',');
+      imageArray.push({ base64: parts[1], type: file.type });
+      renderPreviews(imageArray, previewsId);
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function renderPreviews(imageArray, previewsId) {
+    var container = document.getElementById(previewsId);
+    container.innerHTML = '';
+    imageArray.forEach(function(img, i) {
+      var thumb = document.createElement('div');
+      thumb.className = 'image-thumb';
+
+      var image = document.createElement('img');
+      image.src = 'data:' + img.type + ';base64,' + img.base64;
+      image.alt = 'img' + (i + 1);
+
+      var btn = document.createElement('button');
+      btn.className = 'remove-btn';
+      btn.textContent = 'x';
+      btn.addEventListener('click', (function(arr, idx, pid) {
+        return function(e) {
+          e.stopPropagation();
+          arr.splice(idx, 1);
+          renderPreviews(arr, pid);
+        };
+      })(imageArray, i, previewsId));
+
+      thumb.appendChild(image);
+      thumb.appendChild(btn);
+      container.appendChild(thumb);
+    });
+  }
+
+  setupUploader('qUploadArea', 'qImageInput', questionImages, 'qPreviews');
+  setupUploader('eUploadArea', 'eImageInput', explanationImages, 'ePreviews');
+
+  function safe(str) {
+    return str
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  }
+
+  function renderExplanation(text) {
+    var lines = text.split('\n');
+    var html = '';
+    var sectionTitle = '';
+    var sectionBody = [];
+
+    function flushSection() {
+      if (!sectionTitle) return;
+      var title = sectionTitle.replace(/^#+\s*/, '').trim();
+      var body = sectionBody.join('\n').trim();
+      var safeBody = safe(body)
+        .replace(/\n\n/g, '</p><p>')
+        .replace(/\n/g, '<br>');
+
+      if (title.indexOf('試験') !== -1 || title.indexOf('ポイント') !== -1) {
+        html += '<div class="section">';
+        html += '<div class="section-title">' + safe(title) + '</div>';
+        html += '<div class="point-box">' + safeBody + '</div>';
+        html += '</div>';
+      } else {
+        html += '<div class="section">';
+        html += '<div class="section-title">' + safe(title) + '</div>';
+        html += '<div class="section-body"><p>' + safeBody + '</p></div>';
+        html += '</div>';
+      }
+      sectionBody = [];
+      sectionTitle = '';
+    }
+
+    lines.forEach(function(line) {
+      if (line.match(/^#+ /)) {
+        flushSection();
+        sectionTitle = line;
+      } else {
+        sectionBody.push(line);
+      }
+    });
+    flushSection();
+
+    return html || '<div class="section-body"><p>' + safe(text).replace(/\n/g, '<br>') + '</p></div>';
+  }
+
+  async function callClaude(systemPrompt, userContent, maxTokens) {
+    var messages;
+    if (Array.isArray(userContent) && userContent.length > 0 && userContent[0].role) {
+      messages = userContent;
+    } else {
+      messages = [{ role: 'user', content: userContent }];
+    }
+    var response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: maxTokens || 8000,
+        system: systemPrompt,
+        messages: messages
+      })
+    });
+    var data = await response.json();
+    if (data.error) { throw new Error(data.error.message); }
+    return (data.content || []).map(function(b) { return b.text || ''; }).join('');
+  }
+
+  document.getElementById('explainBtn').addEventListener('click', async function() {
+    if (questionImages.length === 0) {
+      alert('問題の画像を追加してください！');
+      return;
+    }
+
+    var btn = document.getElementById('explainBtn');
+    var loading = document.getElementById('loading');
+    var result = document.getElementById('result');
+    var resultContent = document.getElementById('resultContent');
+    var figureArea = document.getElementById('figureArea');
+    var figureContent = document.getElementById('figureContent');
+
+    btn.disabled = true;
+    loading.classList.add('show');
+    result.classList.remove('show');
+    figureArea.style.display = 'none';
+
+    var correctAnswer = document.getElementById('correctAnswer').value.trim();
+
+    // コンテンツ組み立て
+    var userContent = [];
+
+    // 問題画像
+    questionImages.forEach(function(img) {
+      userContent.push({
+        type: 'image',
+        source: { type: 'base64', media_type: img.type, data: img.base64 }
+      });
+    });
+
+    // 解説画像
+    explanationImages.forEach(function(img) {
+      userContent.push({
+        type: 'image',
+        source: { type: 'base64', media_type: img.type, data: img.base64 }
+      });
+    });
+
+    // テキスト
+    var userText = '上記の問題を解説してください。';
+    if (explanationImages.length > 0) {
+      userText = '上記の問題を解説してください。なお解説画像も添付しています（問題画像の後ろに続く画像が解説です）。';
+    }
+    if (correctAnswer) {
+      userText += '\n\n【正解】' + correctAnswer;
+    }
+    userContent.push({ type: 'text', text: userText });
+
+    var explainPrompt = [
+      'あなたはCCNP ENARSIの勉強を手伝う先生です。',
+      '26歳のネットワーク保守エンジニアが相手で、勉強がしんどくてモチベが低い状態です。',
+      '',
+      '【正解の見分け方】',
+      '問題画像においてPing-tの仕様として、青い文字でハイライトされている選択肢が正解です。',
+      '黒い文字の選択肢は不正解です。',
+      '画像から青いハイライトを読み取って正解を判断してください。',
+      '別途「正解」が入力されている場合はそちらを優先してください。',
+      '',
+      '以下の構造で解説してください：',
+      '',
+      '## なぜこの技術があるの？',
+      '（背景・存在理由を日常の例え話で説明。2〜3文）',
+      '',
+      '## なぜこれが正解？',
+      '（正解の選択肢がなぜ正しいのか分かりやすく説明）',
+      '',
+      '## 他の選択肢はなぜ違う？',
+      '（各選択肢を一行ずつ、なぜ不正解かを説明）',
+      '',
+      '## 試験で使えるポイント',
+      '（一言で覚えるべきキーワードやコツ）',
+      '',
+      'ルール：',
+      '- 難しい専門用語は使わず、日常の例え話や比喩を使う',
+      '- ユーモアを少し混ぜて読んでいて飽きない文章にする',
+      '- 解説画像がある場合はその内容も参考にして正確な解説をする',
+      '- 絵文字を適度に使って読みやすくする'
+    ].join('\n');
+
+    var figureCheckPrompt = [
+      '問題を見て、ネットワーク構成図やプロトコル動作の図解があると理解しやすいか判断してください。',
+      '図が有効な場合は YES、不要な場合は NO とだけ答えてください。'
+    ].join('\n');
+
+    try {
+      var results = await Promise.all([
+        callClaude(explainPrompt, userContent, 8000),
+        callClaude(figureCheckPrompt, userContent, 10)
+      ]);
+
+      var explanation = results[0];
+      var needsFigure = results[1].trim().toUpperCase();
+
+      resultContent.innerHTML = renderExplanation(explanation);
+      result.classList.add('show');
+
+      // 追加質問エリアを表示・会話履歴リセット
+      conversationHistory = [];
+      document.getElementById('followupHistory').innerHTML = '';
+      document.getElementById('followupArea').classList.add('show');
+
+      if (needsFigure.indexOf('YES') === 0) {
+        var svgPrompt = [
+          'ネットワーク図をSVGで生成してください。SVGタグのみ出力し、前後の説明文は不要です。',
+          'width="600" height="300" viewBox="0 0 600 300"',
+          '背景:#1a2235 テキスト:#e2e8f0 線と枠:#00e5ff ボックスfill:#111827',
+          'font-family="monospace" font-size="12"',
+          'ルーターやスイッチはシンプルな四角形で表現し、矢印で接続を示す。日本語ラベル可。'
+        ].join('\n');
+
+        var svgContent = userContent.slice(0, userContent.length - 1).concat([{
+          type: 'text',
+          text: 'この問題に関するネットワーク図をSVGで生成してください。'
+        }]);
+
+        var svgResult = await callClaude(svgPrompt, svgContent, 2000);
+        var svgStart = svgResult.indexOf('<svg');
+        var svgEnd = svgResult.lastIndexOf('</svg>');
+        if (svgStart !== -1 && svgEnd !== -1) {
+          figureContent.innerHTML = svgResult.substring(svgStart, svgEnd + 6);
+          figureArea.style.display = 'block';
+        }
+      }
+    } catch (err) {
+      resultContent.innerHTML = '<p style="color:var(--accent2)">エラー: ' + (err.message || '不明なエラー') + '</p>';
+      result.classList.add('show');
+    } finally {
+      btn.disabled = false;
+      loading.classList.remove('show');
+    }
+  });
+
+  // ========== 追加質問 ==========
+  var followupImages = [];
+  var conversationHistory = []; // {role, content}
+
+  document.getElementById('followupImgAdd').addEventListener('click', function() {
+    document.getElementById('followupImgInput').click();
+  });
+
+  document.getElementById('followupImgInput').addEventListener('change', function(e) {
+    for (var i = 0; i < e.target.files.length; i++) {
+      loadFollowupImage(e.target.files[i]);
+    }
+    e.target.value = '';
+  });
+
+  function loadFollowupImage(file) {
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      var dataUrl = e.target.result;
+      followupImages.push({ base64: dataUrl.split(',')[1], type: file.type, dataUrl: dataUrl });
+      renderFollowupPreviews();
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function renderFollowupPreviews() {
+    var container = document.getElementById('followupImgPreviews');
+    container.innerHTML = '';
+    followupImages.forEach(function(img, i) {
+      var thumb = document.createElement('div');
+      thumb.className = 'followup-thumb';
+      var image = document.createElement('img');
+      image.src = img.dataUrl;
+      var btn = document.createElement('button');
+      btn.className = 'remove-btn';
+      btn.textContent = 'x';
+      btn.addEventListener('click', (function(idx) {
+        return function(e) {
+          e.stopPropagation();
+          followupImages.splice(idx, 1);
+          renderFollowupPreviews();
+        };
+      })(i));
+      thumb.appendChild(image);
+      thumb.appendChild(btn);
+      container.appendChild(thumb);
+    });
+  }
+
+  function appendBubble(role, text, images) {
+    var history = document.getElementById('followupHistory');
+    var bubble = document.createElement('div');
+    bubble.className = 'msg-bubble ' + role;
+
+    if (role === 'user') {
+      var p = document.createElement('p');
+      p.textContent = text;
+      bubble.appendChild(p);
+      if (images && images.length > 0) {
+        images.forEach(function(img) {
+          var im = document.createElement('img');
+          im.src = img.dataUrl;
+          bubble.appendChild(im);
+        });
+      }
+    } else {
+      bubble.innerHTML = renderExplanation(text);
+    }
+
+    history.appendChild(bubble);
+    bubble.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  }
+
+  document.getElementById('followupSendBtn').addEventListener('click', async function() {
+    var text = document.getElementById('followupText').value.trim();
+    if (!text && followupImages.length === 0) return;
+
+    var sendBtn = document.getElementById('followupSendBtn');
+    var followupLoading = document.getElementById('followupLoading');
+
+    sendBtn.disabled = true;
+    followupLoading.classList.add('show');
+
+    // ユーザーメッセージをバブルに表示
+    appendBubble('user', text, followupImages.slice());
+
+    // メッセージ構築
+    var msgContent = [];
+    followupImages.forEach(function(img) {
+      msgContent.push({ type: 'image', source: { type: 'base64', media_type: img.type, data: img.base64 } });
+    });
+    if (text) {
+      msgContent.push({ type: 'text', text: text });
+    }
+
+    conversationHistory.push({ role: 'user', content: msgContent });
+
+    // 入力リセット
+    document.getElementById('followupText').value = '';
+    followupImages = [];
+    renderFollowupPreviews();
+
+    var followupSystemPrompt = [
+      'あなたはCCNP ENARSIの勉強を手伝う先生です。',
+      '26歳のネットワーク保守エンジニアが相手で、勉強がしんどくてモチベが低い状態です。',
+      '追加質問に対して、分かりやすく・ユーモアを交えて答えてください。',
+      '難しい専門用語は避け、日常の例え話や比喩を使ってください。',
+      '絵文字を適度に使って読みやすくしてください。',
+      '以下のフォーマットで答えてください（見出しは ## を使う）。'
+    ].join('\n');
+
+    try {
+      var reply = await callClaude(followupSystemPrompt, conversationHistory, 4000);
+      conversationHistory.push({ role: 'assistant', content: reply });
+      appendBubble('assistant', reply, null);
+    } catch (err) {
+      appendBubble('assistant', 'エラー: ' + (err.message || '不明なエラー'), null);
+    } finally {
+      sendBtn.disabled = false;
+      followupLoading.classList.remove('show');
+    }
+  });
+
+  // Ctrl+Enter で送信
+  document.getElementById('followupText').addEventListener('keydown', function(e) {
+    if (e.ctrlKey && e.key === 'Enter') {
+      document.getElementById('followupSendBtn').click();
+    }
+  });
+
+  // ========== 事前質問 ==========
+  var preqImages = [];
+  var preqHistory = [];
+
+  document.getElementById('preqToggleBtn').addEventListener('click', function() {
+    var area = document.getElementById('preqArea');
+    var btn = document.getElementById('preqToggleBtn');
+    if (area.classList.contains('show')) {
+      area.classList.remove('show');
+      btn.textContent = '💬 解説の前に質問する';
+    } else {
+      area.classList.add('show');
+      btn.textContent = '💬 質問欄を閉じる';
+    }
+  });
+
+  var preqAddArea = document.getElementById('preqImgAdd');
+
+  preqAddArea.addEventListener('click', function() {
+    document.getElementById('preqImgInput').click();
+  });
+
+  preqAddArea.addEventListener('dragover', function(e) {
+    e.preventDefault();
+    preqAddArea.style.borderColor = 'var(--accent)';
+    preqAddArea.style.background = 'rgba(0,229,255,0.05)';
+  });
+
+  preqAddArea.addEventListener('dragleave', function() {
+    preqAddArea.style.borderColor = '';
+    preqAddArea.style.background = '';
+  });
+
+  preqAddArea.addEventListener('drop', function(e) {
+    e.preventDefault();
+    preqAddArea.style.borderColor = '';
+    preqAddArea.style.background = '';
+    for (var i = 0; i < e.dataTransfer.files.length; i++) {
+      if (e.dataTransfer.files[i].type.indexOf('image/') === 0) {
+        loadPreqImage(e.dataTransfer.files[i]);
+      }
+    }
+  });
+
+  // textareaへのドロップも対応
+  var preqTextarea = document.getElementById('preqText');
+
+  preqTextarea.addEventListener('dragover', function(e) {
+    e.preventDefault();
+    preqTextarea.style.borderColor = 'var(--accent)';
+  });
+
+  preqTextarea.addEventListener('dragleave', function() {
+    preqTextarea.style.borderColor = '';
+  });
+
+  preqTextarea.addEventListener('drop', function(e) {
+    e.preventDefault();
+    preqTextarea.style.borderColor = '';
+    for (var i = 0; i < e.dataTransfer.files.length; i++) {
+      if (e.dataTransfer.files[i].type.indexOf('image/') === 0) {
+        loadPreqImage(e.dataTransfer.files[i]);
+      }
+    }
+  });
+
+  document.getElementById('preqImgInput').addEventListener('change', function(e) {
+    for (var i = 0; i < e.target.files.length; i++) {
+      loadPreqImage(e.target.files[i]);
+    }
+    e.target.value = '';
+  });
+
+  function loadPreqImage(file) {
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      var dataUrl = e.target.result;
+      preqImages.push({ base64: dataUrl.split(',')[1], type: file.type, dataUrl: dataUrl });
+      renderPreqPreviews();
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function renderPreqPreviews() {
+    var container = document.getElementById('preqImgPreviews');
+    container.innerHTML = '';
+    preqImages.forEach(function(img, i) {
+      var thumb = document.createElement('div');
+      thumb.className = 'preq-thumb';
+      var image = document.createElement('img');
+      image.src = img.dataUrl;
+      var btn = document.createElement('button');
+      btn.className = 'remove-btn';
+      btn.textContent = 'x';
+      btn.addEventListener('click', (function(idx) {
+        return function(e) {
+          e.stopPropagation();
+          preqImages.splice(idx, 1);
+          renderPreqPreviews();
+        };
+      })(i));
+      thumb.appendChild(image);
+      thumb.appendChild(btn);
+      container.appendChild(thumb);
+    });
+  }
+
+  function appendPreqBubble(role, text, images) {
+    var history = document.getElementById('preqHistory');
+    var bubble = document.createElement('div');
+    bubble.className = 'preq-bubble ' + role;
+    if (role === 'user') {
+      var p = document.createElement('p');
+      p.textContent = text;
+      bubble.appendChild(p);
+      if (images && images.length > 0) {
+        images.forEach(function(img) {
+          var im = document.createElement('img');
+          im.src = img.dataUrl;
+          bubble.appendChild(im);
+        });
+      }
+    } else {
+      bubble.innerHTML = renderExplanation(text);
+    }
+    history.appendChild(bubble);
+    bubble.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  }
+
+  document.getElementById('preqSendBtn').addEventListener('click', async function() {
+    var text = document.getElementById('preqText').value.trim();
+    if (!text && preqImages.length === 0) return;
+
+    var sendBtn = document.getElementById('preqSendBtn');
+    var preqLoading = document.getElementById('preqLoading');
+
+    sendBtn.disabled = true;
+    preqLoading.classList.add('show');
+
+    appendPreqBubble('user', text, preqImages.slice());
+
+    var msgContent = [];
+    preqImages.forEach(function(img) {
+      msgContent.push({ type: 'image', source: { type: 'base64', media_type: img.type, data: img.base64 } });
+    });
+    if (text) { msgContent.push({ type: 'text', text: text }); }
+
+    preqHistory.push({ role: 'user', content: msgContent });
+
+    document.getElementById('preqText').value = '';
+    preqImages = [];
+    renderPreqPreviews();
+
+    var preqSystemPrompt = [
+      'あなたはCCNP ENARSIの勉強を手伝う先生です。',
+      '26歳のネットワーク保守エンジニアが相手で、勉強がしんどくてモチベが低い状態です。',
+      '解説の前の事前質問に答えてください。',
+      '難しい専門用語は避け、日常の例え話や比喩を使ってください。',
+      'ユーモアを少し混ぜて、絵文字を適度に使って読みやすくしてください。',
+      '見出しは ## を使ってください。'
+    ].join('\n');
+
+    try {
+      var reply = await callClaude(preqSystemPrompt, preqHistory, 8000);
+      preqHistory.push({ role: 'assistant', content: reply });
+      appendPreqBubble('assistant', reply, null);
+    } catch (err) {
+      appendPreqBubble('assistant', 'エラー: ' + (err.message || '不明なエラー'), null);
+    } finally {
+      sendBtn.disabled = false;
+      preqLoading.classList.remove('show');
+    }
+  });
+
+  document.getElementById('preqText').addEventListener('keydown', function(e) {
+    if (e.ctrlKey && e.key === 'Enter') {
+      document.getElementById('preqSendBtn').click();
+    }
+  });
+
+  document.getElementById('preqClearBtn').addEventListener('click', function() {
+    preqHistory = [];
+    preqImages = [];
+    renderPreqPreviews();
+    document.getElementById('preqHistory').innerHTML = '';
+    document.getElementById('preqText').value = '';
+  });
+
+  // 全クリア
+  document.getElementById('clearBtn').addEventListener('click', function() {
+    // 画像リセット
+    questionImages.length = 0;
+    explanationImages.length = 0;
+    renderPreviews(questionImages, 'qPreviews');
+    renderPreviews(explanationImages, 'ePreviews');
+    // テキストリセット
+    document.getElementById('correctAnswer').value = '';
+    // 解説エリアリセット
+    document.getElementById('result').classList.remove('show');
+    document.getElementById('resultContent').innerHTML = '';
+    document.getElementById('figureArea').style.display = 'none';
+    document.getElementById('figureContent').innerHTML = '';
+    // 追加質問リセット
+    document.getElementById('followupArea').classList.remove('show');
+    document.getElementById('followupHistory').innerHTML = '';
+    document.getElementById('followupText').value = '';
+    followupImages = [];
+    renderFollowupPreviews();
+    conversationHistory = [];
+    // 事前質問リセット
+    preqHistory = [];
+    preqImages = [];
+    renderPreqPreviews();
+    document.getElementById('preqHistory').innerHTML = '';
+    document.getElementById('preqText').value = '';
+    document.getElementById('preqArea').classList.remove('show');
+    document.getElementById('preqToggleBtn').textContent = '💬 解説の前に質問する';
+    // 上にスクロール
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+})();
+</script>
+</body>
+</html>
